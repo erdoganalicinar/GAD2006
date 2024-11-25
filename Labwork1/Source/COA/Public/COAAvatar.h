@@ -50,6 +50,7 @@ private:
 	void MoveForward(float value);
 	void MoveRight(float value);
 	void UpdateStamina();
+	void BeginPlay();
 	void RunPressed();
 	void RunReleased();
 

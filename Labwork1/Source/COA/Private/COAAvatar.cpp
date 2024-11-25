@@ -23,7 +23,6 @@ bStamina(true)
 	mCamera->bUsePawnControlRotation = false;
 	mSpringArm->bUsePawnControlRotation = true;
 	bUseControllerRotationYaw = false;
-
 }
 
 void ACOAAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -42,6 +41,7 @@ void ACOAAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACOAAvatar::RunPressed);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &ACOAAvatar::RunReleased);
 }
+
 
 void ACOAAvatar::Tick(float DeltaTime)
 {
@@ -112,7 +112,6 @@ void ACOAAvatar::UpdateStamina()
 	if (!bRunning && Stamina < MaxStamina)
 	{
 		Stamina += StaminaGainRate;
-		
 	}
 	if (Stamina <= 0) {
 		bStamina = false;
@@ -130,4 +129,10 @@ void ACOAAvatar::UpdateStamina()
 
 	
 
+}
+
+void ACOAAvatar::BeginPlay()
+{
+	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }

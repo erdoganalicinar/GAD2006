@@ -18,11 +18,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+public:
+UFUNCTION(BlueprintImplementableEvent)
+float ModiftDamage(float Damage);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	virtual float TakeDamage(float DamageAmount, struct FdamageEvent const& DamageEvent, class Acontroller* EventInstigator, AActor* DamageCauser);
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
