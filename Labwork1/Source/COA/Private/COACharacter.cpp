@@ -33,8 +33,6 @@ void ACOACharacter::BeginPlay()
 	
 }
 
-
-
 // Called every frame DeltaTime = 1 => 1 second
 // 60 fos => DeltaTime = ?
 void ACOACharacter::Tick(float DeltaTime)
@@ -47,21 +45,6 @@ void ACOACharacter::Tick(float DeltaTime)
 	}
 }
 
-float ACOACharacter::TakeDamage(float DamageAmount, FdamageEvent const& DamageEvent, Acontroller* EventInstigator, AActor* DamageCauser)
-{
-	if (bDead) return 0;
-	Health -= ModiftDamage(DamageAmount);
-		if (Health < 0) {
-			bDead = true;
-			if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-			{
-
-				DisableInput(PlayerController);
-			}
-	}
-	return 0.0f;
-}
-
 // Called to bind functionality to input
 void ACOACharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -69,7 +52,3 @@ void ACOACharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 }
 
-float ACOACharacter::ModiftDamage(float Damage)
-{
-	return 0.0f;
-}
