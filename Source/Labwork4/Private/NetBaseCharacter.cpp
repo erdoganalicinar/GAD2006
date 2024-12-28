@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "NetBaseCharacter.h"
 
+
+#include "NetBaseCharacter.h"
 #include "NetGameInstance.h"
 #include "NetPlayerState.h"
 
@@ -103,13 +104,15 @@ void ANetBaseCharacter::ChangeBodyPart(EBodyPart index, int Value, bool bDirectS
 	{
 	case EBodyPart::BP_Face: PartFace->SetSkeletalMesh(List->ListSkeletal[CurrentIndex]); break;
 	case EBodyPart::BP_Beard: PartBeard->SetStaticMesh(List->ListStatic[CurrentIndex]); break;
-	case EBodyPart::BP_Chest: PartChest->SetSkeletalMesh(List->ListSkeletal[CurrentIndex]); break;
+	case EBodyPart::BP_Chest: GetMesh()->SetSkeletalMeshAsset(List->ListSkeletal[CurrentIndex]); break;
 	case EBodyPart::BP_Hair: PartHair->SetStaticMesh(List->ListStatic[CurrentIndex]); break;
 	case EBodyPart::BP_Hands: PartHands->SetSkeletalMesh(List->ListSkeletal[CurrentIndex]); break;
 	case EBodyPart::BP_Legs: PartLegs->SetSkeletalMesh(List->ListSkeletal[CurrentIndex]); break;
 	default: break;
 	}
 }
+
+
 
 void ANetBaseCharacter::CheckPlayerState()
 {
@@ -175,6 +178,12 @@ void ANetBaseCharacter::ParseCustomizationData(FString BodyPartData)
 	}
 }
 
+void ANetBaseCharacter::ChangeGender(bool bIsFemale)
+{
+	PartSelection.isFemale = bIsFemale;
+	UpdateBodyParts();
+}
+
 void ANetBaseCharacter::UpdateBodyParts()
 {
 	ChangeBodyPart(EBodyPart::BP_Face, 0, false);
@@ -185,18 +194,22 @@ void ANetBaseCharacter::UpdateBodyParts()
 	ChangeBodyPart(EBodyPart::BP_Legs, 0, false);
 }
 
+FSMeshAssetList* ANetBaseCharacter::GetBodyPartList(EBodyPart Part, bool bIsFemale)
+{
+	FString Name = FString::Printf(TEXT("%s%s"), bIsFemale ? TEXT("Female") : TEXT("Male"), *GiveBodyPart(Part));
+	return SBodyParts ? SBodyParts->FindRow<FSMeshAssetList>(*Name, nullptr) : nullptr;
+}
+
 void ANetBaseCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//DOREPLIFETIME(ANetBaseCharacter, PartSelection);
+	DOREPLIFETIME(ANetBaseCharacter, PartSelection);
 }
 
 void ANetBaseCharacter::OnConstruction(const FTransform& Transform)
 {
-	Super::OnConstruction(Transform);
-
-	UpdateBodyParts();
+		UpdateBodyParts();
 }
 
 // Called to bind functionality to input
@@ -206,14 +219,4 @@ void ANetBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
-void ANetBaseCharacter::ChangeGender(bool bIsFemale)
-{
-	//PartSelection.bIsFemale = bIsFemale; idk what need to be chanced
-	UpdateBodyParts();
-}
 
-FSMeshAssetList* ANetBaseCharacter::GetBodyPartList(EBodyPart Part, bool bIsFemale)
-{
-	FString Name = FString::Printf(TEXT("%s%s"), bIsFemale ? TEXT("Female") : TEXT("Male"), *GiveBodyPart(Part));
-	return SBodyParts ? SBodyParts->FindRow<FSMeshAssetList>(*Name, nullptr) : nullptr;
-}

@@ -2,19 +2,20 @@
 
 
 #include "NetGameInstance.h"
+#include "Net/UnrealNetwork.h"
 
-void UNetGameInstance::HostGame(FString MapName, FSPlayerInfo _PlayerInfo)
+void UNetGameInstance::Host(FString MapName, FSPlayerInfo _PlayerInfo)
 {
-	if(GEngine) GEngine->AddOnScreenDebugMessage(0,1.f,FColor::Red,"Hosting Game");
+	GEngine->AddOnScreenDebugMessage(0, 1.0f,FColor::Red, (TEXT("Hosting Game...")));
 	PlayerInfo = _PlayerInfo;
-	if(GWorld) GWorld->ServerTravel(FString::Printf(TEXT("/Game/Maps/%s?listen"), *MapName));
+	GWorld->ServerTravel(FString::Printf(TEXT("/Game/Maps/%s?listen"), *MapName));
 }
 
-void UNetGameInstance::JoinGame(FString Address, FSPlayerInfo _PlayerInfo)
+void UNetGameInstance::Join(FString Address, FSPlayerInfo _PlayerInfo)
 {
 
-	if(GEngine) GEngine->AddOnScreenDebugMessage(0,1.f,FColor::Green,
-		FString::Printf(TEXT("Joining Game at %s..."), *Address));
+	GEngine->AddOnScreenDebugMessage(0,1.0f,FColor::Green, FString::Printf(TEXT("Joining Game at %s..."), *Address));
 	PlayerInfo = _PlayerInfo;
-	if(GWorld) GWorld->GetFirstPlayerController()->ClientTravel(Address,TRAVEL_Absolute);;
+	GWorld->GetFirstPlayerController()->ClientTravel(Address,TRAVEL_Absolute);;
 }
+

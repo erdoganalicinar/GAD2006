@@ -49,9 +49,12 @@ struct FSPlayerInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString CustomizationData;
-	
+
 	UPROPERTY(BlueprintReadOnly)
 	EPlayerTeam TeamID;
+
+
+	bool Read;
 };
 
 USTRUCT(BlueprintType)
@@ -61,7 +64,11 @@ struct FSBodyPartSelection
 
 	UPROPERTY()
 	int Indices[(int)EBodyPart::BP_Count];
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool isFemale;
 };
+
 
 UCLASS()
 class UNetGameInstance : public UGameInstance
@@ -70,11 +77,12 @@ class UNetGameInstance : public UGameInstance
 
 public:
 
-	UFUNCTION(BlueprintCallable) //BP's exposing referances as Out Params. It's Suck
-	void HostGame(FString MapName, FSPlayerInfo PlayerInfo);
+
+	UFUNCTION(BlueprintCallable) 
+	void Host(FString MapName, FSPlayerInfo PlayerInfo);
 
 	UFUNCTION(BlueprintCallable)
-	void JoinGame(FString Address, FSPlayerInfo PlayerInfo);
+	void Join(FString Address, FSPlayerInfo PlayerInfo);
 
 	UPROPERTY(BlueprintReadWrite)
 	FSPlayerInfo PlayerInfo;

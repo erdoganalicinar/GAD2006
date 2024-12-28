@@ -21,7 +21,11 @@ ANetGameMode::ANetGameMode()
 
 AActor* ANetGameMode::GetPlayerStart(FString Name, int Index)
 {
-	FName PSName = (Index < 0) ? *Name : *FString::Printf(TEXT("%s%d"), *Name, Index % 4);
+	FName PSName;  
+	if (Index < 0) { PSName = *Name; }
+	else {
+		PSName = *FString::Printf(TEXT("%s%d"), *Name, Index % 4);
+	}
 
 	for (TActorIterator<APlayerStart> It(GWorld); It; ++It)
 	{
@@ -66,8 +70,8 @@ void ANetGameMode::AvatarsOverlapped(ANetAvatar* AvatarA, ANetAvatar* AvatarB)
 
 	if (GameStateOpen==nullptr || GameStateOpen->WinningPlayer >=0) return;
 
-	ANetPlayerState* PStateA = AvatarA->GetPlayerState<ANetPlayerState>();// AvatarA->GetPlayerState<ANetPlayerState>(); //Complier error = no matching member function for call to 'GetPlayerState'
-	ANetPlayerState* PStateB = AvatarB->GetPlayerState<ANetPlayerState>();//Cast<ANetPlayerState>(AvatarB->GetPlayerState());// error: no matching member function for call to 'GetPlayerState'
+	ANetPlayerState* PStateA = AvatarA->GetPlayerState<ANetPlayerState>(); //AvatarA->GetPlayerState<ANetPlayerState>(); //Complier error = no matching member function for call to 'GetPlayerState'
+	ANetPlayerState* PStateB = AvatarB->GetPlayerState<ANetPlayerState>(); //Cast<ANetPlayerState>(AvatarB->GetPlayerState());// error: no matching member function for call to 'GetPlayerState'
 
 	GameStateOpen->WinningPlayer = (PStateA->TeamID == EPlayerTeam::TEAM_Red) ? PStateA->PlayerIndex : PStateB->PlayerIndex;
 

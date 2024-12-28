@@ -6,23 +6,22 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-ANetAvatar::ANetAvatar() :
-	MovementScale(1.f)
+ANetAvatar::ANetAvatar():
+	MovementScale(1.0f)
 {
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
-	if(SpringArm==nullptr) return;
 	SpringArm->SetupAttachment(RootComponent);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	if(Camera) Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 }
 
 void ANetAvatar::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(Camera) Camera->bUsePawnControlRotation = false;
-	if(SpringArm) SpringArm->bUsePawnControlRotation = true;
+	Camera->bUsePawnControlRotation = false;
+	SpringArm->bUsePawnControlRotation = true;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -38,18 +37,18 @@ void ANetAvatar::SetupPlayerInputComponent(class UInputComponent* inputComponent
 	inputComponent->BindAxis("MoveRight",this,&ANetAvatar::MoveRight);
 }
 
-void ANetAvatar::MoveForward(float Val)
+void ANetAvatar::MoveForward(float Scale)
 {
 	FRotator Rotation = GetController()->GetControlRotation();
-	FRotator YawRotation(.0f,Rotation.Yaw,.0f);
+	FRotator YawRotation(0.0f,Rotation.Yaw,0.0f);
 	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	AddMovementInput(ForwardDirection, MovementScale * Val);
+	AddMovementInput(ForwardDirection, MovementScale * Scale);
 }
 
-void ANetAvatar::MoveRight(float Val)
+void ANetAvatar::MoveRight(float Scale)
 {
 	FRotator Rotation = GetController()->GetControlRotation();
-	FRotator YawRotation(.0f,Rotation.Yaw,.0f);
+	FRotator YawRotation(0.0f,Rotation.Yaw,0.0f);
 	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	AddMovementInput(ForwardDirection, MovementScale * Val);
+	AddMovementInput(ForwardDirection, MovementScale * Scale);
 }

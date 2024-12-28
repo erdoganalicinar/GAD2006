@@ -50,12 +50,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChangeGender (bool bIsFemale);
 	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnPlayerInfoChanged)
+	FSBodyPartSelection PartSelection;
+
 	UFUNCTION(Server, Reliable)
 	void SubmitPlayerInfoToServer(FSPlayerInfo Info);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerInfoChanged();
-
+	
 	//Timer for waiting PlayerState
 	UFUNCTION()
 	void CheckPlayerState();
@@ -63,40 +66,38 @@ public:
 	UFUNCTION()
 	void CheckPlayerInfo();
 
-	//I might be transfer private Components into Public section idk
-
 	bool bPlayerInfoReceived;
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
-private:
-
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMeshComponent* PartFace;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMeshComponent* PartChest;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* PartHair;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* PartBeard;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* PartEyes;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMeshComponent* PartHands;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMeshComponent* PartLegs;
 
-	int BodyPartIndices[(int)EBodyPart::BP_Count];
+private:
 
-	void UpdateBodyParts();
+	
+	int BodyPartIndices[(int)EBodyPart::BP_Count];
 
 	static FSMeshAssetList* GetBodyPartList(EBodyPart Part, bool bIsFemale);
 
+	void UpdateBodyParts();
 	FTimerHandle ClientDataCheckTimer;
 };

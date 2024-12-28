@@ -30,7 +30,7 @@ public:
 	float MovementScale;
 
 private:
-	void MoveForward(float Val);
-	void MoveRight(float Val);
+	void MoveForward(float Scale);
+	void MoveRight(float Scale);
 	
 };
