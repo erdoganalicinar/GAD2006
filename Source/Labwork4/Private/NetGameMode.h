@@ -16,6 +16,8 @@ class ANetGameMode : public AGameModeBase
 
 	ANetGameMode();
 
+	virtual void BeginPlay() override;
+
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 	UFUNCTION(BlueprintCallable)
@@ -24,6 +26,16 @@ class ANetGameMode : public AGameModeBase
 	UFUNCTION(BlueprintCallable)
 	void EndGame();
 
+	UFUNCTION(BlueprintCallable)
+	void StartTimer();
+
+	
+public:
+	virtual void Tick(float DeltaTime) override;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int CountdownValue;
 private:
 
 	int TotalPlayerCount;
@@ -36,4 +48,11 @@ private:
 
 	AActor* AssignTeamAndPlayerStart(AController* Player);
 	
+	void StartCountdown();
+	void CountdownTick();
+	void CountdownFinished();
+	
+
+	FTimerHandle CountdownTimerHandle;
+
 };

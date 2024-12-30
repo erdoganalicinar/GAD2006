@@ -17,7 +17,9 @@ ANetGameMode::ANetGameMode()
 	DefaultPawnClass = ANetBaseCharacter::StaticClass();
 	PlayerStateClass = ANetPlayerState::StaticClass();
 	GameStateClass = ANetGameState::StaticClass();
+	CountdownValue = 30;
 }
+
 
 AActor* ANetGameMode::GetPlayerStart(FString Name, int Index)
 {
@@ -59,10 +61,14 @@ AActor* ANetGameMode::AssignTeamAndPlayerStart(AController* Player)
 		else PlayerState->TeamID = PlayerState->Result == EGameResults::RESULT_Won ? EPlayerTeam::TEAM_Blue : EPlayerTeam::TEAM_Red;
 
 		Start = (PlayerState->TeamID == EPlayerTeam::TEAM_Blue) ? GetPlayerStart("Blue", -1) : GetPlayerStart("Red", PlayerStartIndex++);
+
+		
 	}
 
 	return Start;
 }
+
+
 
 void ANetGameMode::AvatarsOverlapped(ANetAvatar* AvatarA, ANetAvatar* AvatarB)
 {
@@ -81,6 +87,7 @@ void ANetGameMode::AvatarsOverlapped(ANetAvatar* AvatarA, ANetAvatar* AvatarB)
 
 	for (APlayerController* Player : AllPlayers)
 	{
+
 		auto PState = Player->GetPlayerState<ANetPlayerState>();
 
 		PState->Result = (PState->TeamID == EPlayerTeam::TEAM_Blue) ? EGameResults::RESULT_Lost : EGameResults::RESULT_Won;
@@ -106,4 +113,62 @@ void ANetGameMode::EndGame()
 
 	ANetGameState* GameStateOpen = GetGameState<ANetGameState>();
 	GameStateOpen->TriggerRestart();
+}
+
+void ANetGameMode::StartTimer()
+{
+	StartCountdown();
+}
+
+void ANetGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+}
+void ANetGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+void ANetGameMode::StartCountdown()
+{
+	if (CountdownValue > 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(CountdownTimerHandle, this, &ANetGameMode::CountdownTick, 1.0f, true);
+	}
+}
+
+void ANetGameMode::CountdownTick()
+{
+	if (CountdownValue > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Countdown: %d"), CountdownValue);
+		CountdownValue--;
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CountdownTimerHandle);
+		CountdownFinished();
+	}
+	
+}
+
+void ANetGameMode::CountdownFinished()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Countdown finished!"));
+
+	ANetGameState* GameStateOpen = GetGameState<ANetGameState>();
+	GameStateOpen->OnVictoryBlue();
+	for (APlayerController* Player : AllPlayers)
+	{
+
+		auto PState = Player->GetPlayerState<ANetPlayerState>();
+
+		PState->Result = (PState->TeamID == EPlayerTeam::TEAM_Blue) ? EGameResults::RESULT_Won : EGameResults::RESULT_Lost;
+	}
+	FTimerHandle EndGameTimerHandle;
+	GWorld->GetTimerManager().SetTimer(EndGameTimerHandle, this, &ANetGameMode::EndGame, 2.5f, false);
+	
+
+	
+
 }

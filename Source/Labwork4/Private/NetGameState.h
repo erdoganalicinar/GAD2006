@@ -28,12 +28,14 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnVictory();
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnRestart();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void TriggerRestart();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnVictoryBlue();
 
 	UFUNCTION(BlueprintCallable)
 	ANetPlayerState* GetPlayerStateByIndex(int PlayerIndex);
